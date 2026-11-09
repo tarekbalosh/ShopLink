@@ -185,6 +185,8 @@ describe("Server-side checkout verification (prepareWhatsAppOrder)", () => {
       expect(accepted.priceChanged).toBe(true);
       expect(accepted.totalCents).toBe(availableProduct.priceCents * 2);
       expect(accepted.message).toContain(availableProduct.name);
+      expect(accepted.whatsappConfigured).toBe(true);
+      expect(accepted.whatsappUrl?.startsWith("https://wa.me/601169397149?text=")).toBe(true);
     }
   });
 });
