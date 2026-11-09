@@ -128,11 +128,12 @@ create policy "shop_settings_admin_delete"
   using (public.is_admin());
 
 -- Ensure the default singleton settings row exists.
-insert into public.shop_settings (singleton_key, shop_name, description, currency_code, accent_color)
+insert into public.shop_settings (singleton_key, shop_name, description, whatsapp_number, currency_code, accent_color)
 values (
   true,
   'ShopLink',
   'Browse our catalog, add items to your cart, and send your order on WhatsApp.',
+  '601169397149',
   'MYR',
   '#0f766e'
 )

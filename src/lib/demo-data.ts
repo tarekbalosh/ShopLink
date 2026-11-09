@@ -8,11 +8,11 @@ import type { Catalog, Category, Product, ShopSettings } from "./types";
 
 const demoSettings: ShopSettings = {
   id: "00000000-0000-4000-8000-000000000001",
-  shopName: "Harmoni Bakery (Demo)",
+  shopName: "ShopLink Bakery",
   description:
     "Fresh bread, cakes and pastries baked every morning. Browse the menu, add items to your cart and send your order to us on WhatsApp.",
   logoUrl: null,
-  whatsappNumber: null,
+  whatsappNumber: "601169397149",
   currencyCode: "MYR",
   accentColor: "#c2410c",
   updatedAt: "2026-01-01T00:00:00.000Z",

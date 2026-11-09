@@ -45,7 +45,7 @@ const fallbackSettings: ShopSettings = {
   shopName: "ShopLink Store",
   description: "Browse our products and place your order directly on WhatsApp.",
   logoUrl: null,
-  whatsappNumber: null,
+  whatsappNumber: "601169397149",
   currencyCode: "MYR",
   accentColor: DEFAULT_ACCENT,
   updatedAt: "2026-01-01T00:00:00.000Z",
