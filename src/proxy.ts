@@ -1,17 +1,24 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ADMIN_SESSION_COOKIE } from "@/lib/auth";
 import { getPublicSupabaseEnv } from "@/lib/env";
 
 /**
- * Next.js 16 Proxy (formerly Middleware) that keeps Supabase Auth session
- * cookies refreshed on `/admin` routes. Full authorization (`admin_users`
- * allowlist check) is enforced in `requireAdminPage()` and `requireAdminMutation()`.
+ * Next.js 16 Proxy (formerly Middleware) that protects `/admin` routes and
+ * refreshes Supabase Auth cookies when Supabase is configured.
+ * Full server-side authorization is also enforced in `requireAdminPage()` and
+ * `requireAdminMutation()`.
  */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const isLoginRoute = request.nextUrl.pathname.startsWith("/admin/login");
+  const hasPasswordCookie = Boolean(request.cookies.get(ADMIN_SESSION_COOKIE)?.value);
 
   const env = getPublicSupabaseEnv();
   if (!env) {
+    if (!isLoginRoute && !hasPasswordCookie) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
     return response;
   }
 
@@ -37,7 +44,13 @@ export async function proxy(request: NextRequest) {
   );
 
   // Refresh the auth token if needed.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!isLoginRoute && !hasPasswordCookie && !user) {
+    return NextResponse.redirect(new URL("/admin/login", request.url));
+  }
 
   return response;
 }
@@ -45,4 +58,3 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: ["/admin/:path*"],
 };
-

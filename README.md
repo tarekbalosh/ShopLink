@@ -88,9 +88,16 @@ Run [`supabase/verify_rls.sql`](./supabase/verify_rls.sql) in the Supabase SQL E
 
 ---
 
-## 3. Creating the First Admin User (Safe Procedure)
+## 3. Admin Sign-In (`123` / `١٢٣`) & Supabase Admin Allowlist
 
-ShopLink does **not** allow public admin sign-up, and it does **not** assume every authenticated user is an admin. To create and authorize the first shop admin:
+### Instant Password Sign-In
+- Open `http://localhost:3000/admin/login` and enter the password **`123`** (or **`١٢٣`**).
+- You can customize the password in `.env.local` (or Vercel Environment Variables) by setting `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`.
+- When Supabase is not configured yet, admin changes (products, categories, uploaded images, and shop settings) are persisted locally in `.data/catalog.json` and `public/uploads/`.
+
+### Creating a Supabase Admin User (When Using Supabase Auth + RLS)
+
+ShopLink also includes full PostgreSQL Row Level Security (`public.admin_users` allowlist). To authorize a Supabase Auth user in the database:
 
 1. In the Supabase Dashboard, go to **Authentication → Users** and click **Add user → Create new user**.
 2. Enter the admin's **Email** and a strong **Password**, check **Auto Confirm User**, and click **Create user**.
