@@ -20,6 +20,7 @@ import {
   normalizeWhatsAppNumber,
 } from "@/lib/whatsapp";
 import { prepareWhatsAppOrder } from "@/app/actions/checkout";
+import { normalizePasswordDigits, verifyAdminPassword } from "@/lib/auth";
 import { demoCatalog } from "@/lib/demo-data";
 
 describe("Money decimal handling", () => {
@@ -195,6 +196,15 @@ describe("Accent color accessibility", () => {
       expect(contrastRatio(palette.accent, palette.accentForeground)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(palette.accentInk, "#ffffff")).toBeGreaterThanOrEqual(4.5);
     }
+  });
+});
+
+describe("Admin password verification (123 / ١٢٣)", () => {
+  it("accepts both ASCII 123 and Arabic-Indic ١٢٣ and rejects wrong passwords", () => {
+    expect(normalizePasswordDigits("١٢٣")).toBe("123");
+    expect(verifyAdminPassword("123")).toBe(true);
+    expect(verifyAdminPassword("١٢٣")).toBe(true);
+    expect(verifyAdminPassword("999")).toBe(false);
   });
 });
 

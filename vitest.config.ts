@@ -5,6 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "server-only": path.resolve(__dirname, "./src/lib/__tests__/empty-server-only.ts"),
     },
   },
   test: {
@@ -12,4 +13,3 @@ export default defineConfig({
     include: ["src/**/*.test.ts"],
   },
 });
-

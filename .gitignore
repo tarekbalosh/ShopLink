@@ -38,6 +38,10 @@ yarn-error.log*
 supabase/.temp/
 supabase/.branches/
 
+# local fallback catalog store & uploaded images
+/.data/
+/public/uploads/
+
 # vercel
 .vercel
 

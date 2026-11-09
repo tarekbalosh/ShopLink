@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { DEFAULT_ACCENT, normalizeHex } from "@/lib/color";
-import { demoCatalog } from "@/lib/demo-data";
+import { readLocalCatalog } from "@/lib/local-store";
 import { toCents } from "@/lib/money";
 import { createPublicSupabaseClient, createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Catalog, Category, Product, ShopSettings } from "@/lib/types";
@@ -98,7 +98,14 @@ export async function getPublicCatalog(): Promise<Catalog> {
 
   const supabase = createPublicSupabaseClient();
   if (!supabase) {
-    return demoCatalog;
+    const local = await readLocalCatalog();
+    return {
+      ...local,
+      products: local.products
+        .filter((p) => p.isAvailable)
+        .sort((a, b) => a.sortOrder - b.sortOrder),
+      categories: [...local.categories].sort((a, b) => a.sortOrder - b.sortOrder),
+    };
   }
 
   try {
@@ -153,7 +160,11 @@ export async function getPublicCatalog(): Promise<Catalog> {
 export async function getFreshPublicCatalog(): Promise<Catalog> {
   const supabase = createPublicSupabaseClient();
   if (!supabase) {
-    return demoCatalog;
+    const local = await readLocalCatalog();
+    return {
+      ...local,
+      products: local.products.filter((p) => p.isAvailable),
+    };
   }
 
   const [settingsRes, categoriesRes, productsRes] = await Promise.all([
@@ -207,11 +218,11 @@ export async function getAdminCatalogData(): Promise<{
 }> {
   const supabase = await createServerSupabaseClient();
   if (!supabase) {
+    const local = await readLocalCatalog();
     return {
-      settings: demoCatalog.settings,
-      categories: demoCatalog.categories,
-      products: demoCatalog.products,
-      error: "Supabase is not configured. Configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+      settings: local.settings,
+      categories: [...local.categories].sort((a, b) => a.sortOrder - b.sortOrder),
+      products: [...local.products].sort((a, b) => a.sortOrder - b.sortOrder),
     };
   }
 
@@ -246,4 +257,3 @@ export async function getAdminCatalogData(): Promise<{
     products: (productsRes.data ?? []).map(mapProduct),
   };
 }
-
